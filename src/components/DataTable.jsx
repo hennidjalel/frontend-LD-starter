@@ -1,6 +1,4 @@
 import PropTypes from 'prop-types';
-
-
 import { useState } from "react";
 
 import Table from "@mui/material/Table";
@@ -10,36 +8,22 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-
-import {CardContent } from "@mui/material";
-
 import TablePagination from "@mui/material/TablePagination";
-
-
-
-
+import {CardContent } from "@mui/material";
 export default function DataTable({data, columns}) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
-
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
 
-
-
-
   return (
-    
       <>
-        
-
         {/* Table Content */}
         <CardContent>
           <TableContainer component={Paper} className="">
@@ -53,7 +37,6 @@ export default function DataTable({data, columns}) {
               </TableHead>
               <TableBody>
                 {data
-                
                 .slice(page*rowsPerPage, (page + 1)*rowsPerPage)
                 .map((row, rowIndex) => (
                     <TableRow key={rowIndex}>
@@ -66,7 +49,6 @@ export default function DataTable({data, columns}) {
             </Table>
           </TableContainer>
         </CardContent>
-
         {/* Table Pagination */}
         <CardContent>
           <TablePagination
@@ -79,7 +61,6 @@ export default function DataTable({data, columns}) {
           />
         </CardContent>
       </>
-    
   );
 }
 

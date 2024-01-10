@@ -13,9 +13,9 @@ import { useState } from "react";
 const App = () => {
   const { data: rowData, error, isLoading } = useAxiosFetch("/pokemon.json");
 
-    //Search by name & Search by threshold
-    const [threshold, setThreshold] = useState('')
-    const [search, setSearch] = useState('')
+  //Search by name & Search by threshold
+  const [threshold, setThreshold] = useState('')
+  const [search, setSearch] = useState('')
 
 
   const columns = [
@@ -40,13 +40,27 @@ const App = () => {
       pokemon.special_attack +
       pokemon.special_defense +
       pokemon.speed,
-  })).filter((row)=>row.name.toLowerCase().includes(search.toLowerCase()) && row.power >=threshold)
+
+  })).filter((row) => row.name.toLowerCase().includes(search.toLowerCase()) && row.power >= threshold)
+
+
+  const minPowerPokemon = data.reduce((minPowerPokemon, currentPokemon) =>
+    (currentPokemon.power < minPowerPokemon.power) ? currentPokemon : minPowerPokemon,
+    data[0] 
+    );
+    
+  const maxPowerPokemon = data.reduce((minPowerPokemon, currentPokemon) =>
+    (currentPokemon.power > minPowerPokemon.power) ? currentPokemon : minPowerPokemon,
+    data[0]
+  );
+
 
   return (
     <div
       style={{
         background: "#414040",
-        height: "100%",
+        minHeight: "100vh",
+        maxHeight: "100%",
         padding: "20px",
         display: "flex",
         alignItems: "center",
@@ -54,49 +68,53 @@ const App = () => {
     >
       <Container >
         <Card >
-        <CardContent
-          component="form"
-          sx={{
-            "& > :not(style)": { m: 2, width: "45ch" },
-          }}
-          noValidate
-          autoComplete="off"
-        >
-          <TextField
-            id="outlined-textarea"
-            variant="standard"
-            placeholder="Search..."
-            multiline
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start" >
-                  <CiSearch />
-                </InputAdornment>
-              ),
+          <CardContent
+            component="form"
+            sx={{
+              "& > :not(style)": { m: 2, width: "45ch" },
             }}
-            onChange={(e)=>{
-              setSearch(e.target.value)
-            }}
-          />
-          <TextField
-            id="outlined-textarea"
-            variant="standard"
-            placeholder="Power Threshold"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start" >
-                  <CiHeart />
-                </InputAdornment>
-              ),
-            }}
-            onChange={(e)=>{
-              setThreshold(e.target.value)
-            }}
-          />
-          <h3>Min power: 235</h3>
-          <h3>Max power: 450</h3>
-        </CardContent>
-        <DataTable data={data} columns={columns} />
+            noValidate
+            autoComplete="off"
+          >
+            <TextField
+              id="outlined-textarea"
+              variant="standard"
+              placeholder="Search..."
+              multiline
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start" >
+                    <CiSearch />
+                  </InputAdornment>
+                ),
+              }}
+              onChange={(e) => {
+                setSearch(e.target.value)
+              }}
+            />
+            <TextField
+              id="outlined-textarea"
+              variant="standard"
+              placeholder="Power Threshold"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start" >
+                    <CiHeart />
+                  </InputAdornment>
+                ),
+              }}
+              onChange={(e) => {
+                setThreshold(e.target.value)
+              }}
+            />
+            <h4>Min power: {minPowerPokemon?.power}</h4>
+            <h4>Max power: {maxPowerPokemon?.power}</h4>
+          </CardContent>
+          <>
+          {isLoading && <p>Loading pokemon ....</p>}
+          {error && <h3 className="statusMessage">{error}</h3>}
+          {!isLoading && !error &&(data.length ? <DataTable data={data} columns={columns}/> : <p className="statusMsg">No pokemons to display</p>)}
+          </>
         </Card>
       </Container>
     </div>
